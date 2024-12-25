@@ -15,6 +15,11 @@ class LLaMAFileHandler(FileSystemEventHandler):
 
     def log_file_change(self, file_path):
         try:
+            # Skip SQLite journal files
+            if file_path.endswith("-journal"):
+                print(f"Ignored journal file: {file_path}")
+                return
+
             file_hash = self.get_file_hash(file_path)
             file_size = os.path.getsize(file_path)
             with sqlite3.connect(self.db_path) as conn:
